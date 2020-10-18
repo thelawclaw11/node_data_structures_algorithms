@@ -1,0 +1,26 @@
+{
+  "name": "node_data_structures_algorithms",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "jest"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "lodash": "^4.17.20"
+  },
+  "devDependencies": {
+    "eslint-plugin-jest": "^24.1.0",
+    "jest": "^26.5.2"
+  },
+  "jest": {
+    "testEnvironment": "node"
+  },
+  "eslintConfig": {
+    "extends": [
+      "plugin:jest/recommended"
+    ]
+  }
+}
