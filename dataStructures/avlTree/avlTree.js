@@ -1,3 +1,5 @@
+const assert = require("assert");
+
 const { inspect } = require("util");
 function prettyPrint(x) {
     console.log(inspect(x, false, null, true));
@@ -9,34 +11,11 @@ class Node {
         this.left = null;
         this.right = null;
         this.parent = null;
-    }
-
-    get leftHeight() {
-        if (!this.left) {
-            return 0;
-        }
-
-        return this.left.height + 1;
-    }
-
-    get rightHeight() {
-        if (!this.right) {
-            return 0;
-        }
-
-        return this.right.height + 1;
-    }
-
-    get height() {
-        // if (this.memoizedHeight !== null) {
-        //     return this.memoizedHeight;
-        // }
-
-        return Math.max(this.leftHeight, this.rightHeight);
+        this.height = 0;
     }
 
     get balanceFactor() {
-        return this.leftHeight - this.rightHeight;
+        return getHeight(this.left) - getHeight(this.right);
     }
 
     traverseInOrder() {
@@ -58,33 +37,21 @@ class Node {
     }
 }
 
+function updateHeight(node) {
+    node.height = Math.max(getHeight(node.left), getHeight(node.right)) + 1;
+}
+
+function getHeight(node) {
+    if (node === null) {
+        return -1;
+    } else {
+        return node.height;
+    }
+}
+
 class AvlTree {
     constructor() {
         this.root = null;
-    }
-
-    balance(node) {
-        const rootBalanceFactor = node.balanceFactor;
-        if (rootBalanceFactor > 1) {
-            const leftBalanceFactor = node.left.balanceFactor;
-            if (leftBalanceFactor > 0) {
-                //console.log("rotateLeftLeft");
-                this.rotateLeftLeft(node);
-            } else if (leftBalanceFactor < 0) {
-                //console.log("rotateLeftRight");
-                this.rotateLeftRight(node);
-            }
-        } else if (rootBalanceFactor < -1) {
-            const rightBalanceFactor = node.right.balanceFactor;
-            if (rightBalanceFactor < 0) {
-                //console.log("rotateRightRight");
-                this.rotateRightRight(node);
-            } else if (rightBalanceFactor > 0) {
-                //console.log("rotateRightLeft");
-
-                this.rotateRightLeft(node);
-            }
-        }
     }
 
     insert(valueToInsert) {
@@ -122,8 +89,34 @@ class AvlTree {
     checkBalance(node) {
         let currentNode = node;
         while (currentNode) {
+            updateHeight(currentNode);
+            //console.log(currentNode);
             this.balance(currentNode);
             currentNode = currentNode.parent;
+        }
+    }
+
+    balance(node) {
+        const rootBalanceFactor = node.balanceFactor;
+        if (rootBalanceFactor > 1) {
+            const leftBalanceFactor = node.left.balanceFactor;
+            if (leftBalanceFactor > 0) {
+                //console.log("rotateLeftLeft");
+                this.rotateLeftLeft(node);
+            } else if (leftBalanceFactor < 0) {
+                //console.log("rotateLeftRight");
+                this.rotateLeftRight(node);
+            }
+        } else if (rootBalanceFactor < -1) {
+            const rightBalanceFactor = node.right.balanceFactor;
+            if (rightBalanceFactor < 0) {
+                //console.log("rotateRightRight");
+                this.rotateRightRight(node);
+            } else if (rightBalanceFactor > 0) {
+                //console.log("rotateRightLeft");
+
+                this.rotateRightLeft(node);
+            }
         }
     }
 
@@ -170,6 +163,8 @@ class AvlTree {
         leftNode.right = rootNode;
         leftNode.parent = rootNode.parent;
         rootNode.parent = leftNode;
+        updateHeight(rootNode);
+        updateHeight(leftNode);
     }
 
     rotateRightRight(rootNode) {
@@ -197,6 +192,8 @@ class AvlTree {
         rightNode.left = rootNode;
         rightNode.parent = rootNode.parent;
         rootNode.parent = rightNode;
+        updateHeight(rootNode);
+        updateHeight(rightNode);
     }
 
     rotateLeftRight(rootNode) {
@@ -210,21 +207,32 @@ class AvlTree {
     }
 }
 
-// const tree = new AvlTree();
-//
-// const input = generateUnsortedArray();
-//
-// for (const num of input) {
-//     tree.insert(num);
-// }
+const input = generateUnsortedArray(1000000);
+const copy = input.slice();
 
-// console.log(tree.root.balanceFactor);
-//
-// console.log(input);
-// console.log(tree.traverseInOrder());
-//prettyPrint(tree);
+console.time("avlSort");
+const tree = new AvlTree();
+for (const num of input) {
+    tree.insert(num);
+}
 
-//console.log(tree.traverseInOrder());
+//const alpha = avlSort(input);
+console.timeEnd("avlSort");
+
+// console.time("nativeSort");
+// copy.sort((a, b) => a - b);
+// const beta = copy;
+// console.timeEnd("nativeSort");
+
+//assert.deepStrictEqual(alpha, beta);
+
+function avlSort(array) {
+    const tree = new AvlTree();
+    for (const num of array) {
+        tree.insert(num);
+    }
+    return tree.traverseInOrder();
+}
 
 function generateUnsortedArray(n) {
     const out = [];
