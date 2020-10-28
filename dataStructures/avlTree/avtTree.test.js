@@ -6,6 +6,24 @@ function prettyPrint(x) {
 const AvlTree = require("./avlTree");
 
 describe("avl Tree", () => {
+    it("should get min larger than", () => {
+        const tree = new AvlTree();
+
+        tree.insert(9);
+        tree.insert(80);
+        tree.insert(24);
+        tree.insert(11);
+        tree.insert(2);
+        tree.insert(5);
+        //tree.insert(0);
+        tree.insert(55);
+        //prettyPrint(tree);
+
+        expect(tree.getMinimumValueLargerThan(9)).toBe(11);
+
+        // expect(tree.getSuccessor(0)).toBe(null);
+    });
+
     it("should do simple left-left rotation", () => {
         const tree = new AvlTree();
 

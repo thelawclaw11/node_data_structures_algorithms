@@ -1,9 +1,9 @@
-const assert = require("assert");
-
 const { inspect } = require("util");
 function prettyPrint(x) {
     console.log(inspect(x, false, null, true));
 }
+const fs = require("fs");
+const slow = require("./solveSlow");
 
 class Node {
     constructor(value) {
@@ -16,24 +16,6 @@ class Node {
 
     get balanceFactor() {
         return getHeight(this.left) - getHeight(this.right);
-    }
-
-    traverseInOrder() {
-        const out = [];
-
-        const traverse = (currentNode) => {
-            if (currentNode === null) {
-                return;
-            }
-            traverse(currentNode.left);
-            out.push(currentNode.value);
-            traverse(currentNode.right);
-        };
-        traverse(this);
-        return out;
-    }
-    toString() {
-        return this.traverseInOrder().toString();
     }
 }
 
@@ -68,7 +50,7 @@ class AvlTree {
                     } else {
                         traverse(root.left);
                     }
-                } else {
+                } else if (valueToInsert > root.value) {
                     if (root.right === null) {
                         root.right = newNode;
                         newNode.parent = root;
@@ -83,60 +65,6 @@ class AvlTree {
         this.checkBalance(newNode);
 
         return valueToInsert;
-    }
-
-    getMinimumValueLargerThan(value) {
-        let minValue = Infinity;
-        const traverse = (current) => {
-            if (current === null) {
-                return;
-            }
-            if (value < current.value) {
-                if (current.value < minValue) {
-                    minValue = current.value;
-                }
-                return traverse(current.left);
-            }
-            if (value >= current.value) {
-                return traverse(current.right);
-            }
-        };
-        traverse(this.root);
-        return minValue;
-    }
-
-    findNodeByValue(value) {
-        const traverse = (current) => {
-            if (value === current.value) {
-                return current;
-            }
-            if (value < current.value) {
-                return traverse(current.left);
-            }
-            if (value > current.value) {
-                return traverse(current.right);
-            }
-        };
-        return traverse(this.root);
-    }
-
-    getSuccessor(value) {
-        const found = this.findNodeByValue(value);
-        if (found.right !== null) {
-            const successor = this.getMinNode(found.right);
-            return successor.value;
-        } else {
-            return null;
-        }
-    }
-
-    getMinNode(node) {
-        let current = node;
-
-        while (current.left !== null) {
-            current = current.left;
-        }
-        return current;
     }
 
     checkBalance(node) {
@@ -165,24 +93,6 @@ class AvlTree {
                 this.rotateRightLeft(node);
             }
         }
-    }
-
-    traverseInOrder() {
-        const out = [];
-
-        const traverse = (currentNode) => {
-            if (currentNode === null) {
-                return;
-            }
-            traverse(currentNode.left);
-            out.push(currentNode.value);
-            traverse(currentNode.right);
-        };
-        traverse(this.root);
-        return out;
-    }
-    toString() {
-        return this.root.toString();
     }
 
     rotateLeftLeft(rootNode) {
@@ -254,21 +164,78 @@ class AvlTree {
     }
 }
 
-function avlSort(array) {
+function getMinimumValueLargerThan(tree, value) {
+    let minValue = null;
+    const traverse = (current) => {
+        if (current === null) {
+            return;
+        }
+        if (value < current.value) {
+            if (current.value < minValue || minValue === null) {
+                minValue = current.value;
+            }
+            return traverse(current.left);
+        }
+        if (value > current.value) {
+            return traverse(current.right);
+        }
+    };
+    traverse(tree.root);
+    return minValue;
+}
+
+function maximumSum(array, mod) {
+    const length = array.length;
+    const prefixSum = Array(length).fill(0);
+
+    prefixSum[0] = array[0] % mod;
+
+    for (let i = 1; i < length; i++) {
+        prefixSum[i] = (prefixSum[i - 1] + array[i] + mod) % mod;
+    }
+    //prettyPrint(tree);
+
     const tree = new AvlTree();
-    for (const num of array) {
-        tree.insert(num);
+    tree.insert(prefixSum[0]);
+
+    let result = prefixSum[0];
+
+    for (let i = 1; i < length; i++) {
+        const a = getMinimumValueLargerThan(tree, prefixSum[i]);
+        if (a !== null) {
+            result = Math.max((prefixSum[i] - a + mod) % mod, result);
+        }
+        result = Math.max(prefixSum[i], result);
+        tree.insert(prefixSum[i]);
     }
-    return tree.traverseInOrder();
+    //prettyPrint(tree);
+
+    return result;
 }
 
-function generateUnsortedArray(n) {
-    const out = [];
+const one = "412776092 1424268981 1911759957 749241874 137806863 42999171 982906997 135497282 511702306 2084420926 1937477085 1827336328 572660337 1159126506 805750847 1632621730 1100661314 1433925858 1141616125 84353896 939819583 2001100546 1998898815 1548233368 610515435 1585990365 1374344044 760313751 1477171088 356426809 945117277 1889947179 1780695789 709393585 491705404 1918502652 752392755 1474612400 2053999933 1264095061 1411549677 1843993369 943947740 1984210013 855636227 1749698587 1469348095 1956297540 1036140796 463480571"
+    .split(" ")
+    .map(Number);
+console.log(one);
+const oneMod = 184803527;
+console.log(slow(one, oneMod));
+console.log(maximumSum(one, oneMod));
 
-    for (let i = 0; i <= n; i++) {
-        out.push(Math.round(Math.random() * 1000000));
-    }
-    return out;
-}
+// console.log(maximumSum([3, 3, 9, 9, 5], 7));
+// console.log(maximumSum([1, 5, 9], 5));
+//console.log(maximumSum([1, 2, 3, 4, 5, 6, 7, -8, 2, 12, 11], 15));
 
-module.exports = AvlTree;
+// const array = readTestCase("/input07.txt");
+// const mod = 2104194685;
+//
+// console.log(maximumSum(array, mod));
+//
+// function readTestCase(path) {
+//     const string = fs
+//         .readFileSync(__dirname + path, "utf8")
+//         .split(" ")
+//         .map(Number);
+//     return string;
+// }
+
+module.exports = maximumSum;

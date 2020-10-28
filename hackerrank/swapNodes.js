@@ -1,0 +1,1 @@
+function swapNodes(indexes, queries) {}
