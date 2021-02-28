@@ -1,0 +1,5 @@
+1: define sub-problems
+2: guess part of solution
+3: relate sub-problem solutions
+4: recurse and memoize--top down or bottom up
+5: solve original problem

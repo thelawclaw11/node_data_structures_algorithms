@@ -1,4 +1,4 @@
-const HashTable = require("./HashTable");
+const HashTable = require("./openAddressing");
 const faker = require("faker");
 const { inspect } = require("util");
 function prettyPrint(x) {
@@ -26,7 +26,7 @@ describe("HashTable", () => {
         const entries = [];
 
         for (let i = 0; i < 1000; i++) {
-            const key = faker.random.alphaNumeric(10);
+            const key = faker.random.alpha(10);
             const value = faker.random.alphaNumeric(20);
             table.set(key, value);
             entries.push([key, value]);
@@ -43,12 +43,11 @@ describe("HashTable", () => {
         const entries = [];
 
         for (let i = 0; i < 1000; i++) {
-            const key = faker.random.alphaNumeric(10);
+            const key = faker.random.alpha(10);
             const value = faker.random.alphaNumeric(20);
             table.set(key, value);
             entries.push([key, value]);
         }
-        //console.log(table);
 
         expect(table.table.length).toBeGreaterThan(100);
 
@@ -75,27 +74,5 @@ describe("HashTable", () => {
         table.remove("name");
         expect(table.get("name")).toBeUndefined();
         expect(table.get("age")).toBe(21);
-    });
-
-    it("should keep table size small", () => {
-        const table = new HashTable();
-
-        const entries = [];
-
-        for (let i = 0; i < 1000; i++) {
-            const key = faker.random.alphaNumeric(10);
-            const value = faker.random.alphaNumeric(20);
-            table.set(key, value);
-            entries.push([key, value]);
-        }
-        console.log(table);
-
-        // const tableSize = table.table.length
-        // const usedSlots = table.usedSlots
-        // expect()
-
-        for (const [key, value] of entries) {
-            expect(table.get(key)).toEqual(value);
-        }
     });
 });
