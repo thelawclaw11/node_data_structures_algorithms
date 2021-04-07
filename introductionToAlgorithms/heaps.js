@@ -68,18 +68,18 @@ function maxHeapify(A, i = 0) {
 function minHeapify(A, i = 0) {
     const leftChildIndex = getLeftChildIndex(i);
     const rightChildIndex = getRightChildIndex(i);
-    let largest = i;
+    let smallest = i;
 
     if (leftChildIndex < A.length && A[leftChildIndex] < A[i]) {
-        largest = leftChildIndex;
+        smallest = leftChildIndex;
     }
 
-    if (A[rightChildIndex] < A[largest]) {
-        largest = rightChildIndex;
+    if (A[rightChildIndex] < A[smallest]) {
+        smallest = rightChildIndex;
     }
-    if (largest !== i) {
-        [A[largest], A[i]] = [A[i], A[largest]];
-        return minHeapify(A, largest);
+    if (smallest !== i) {
+        [A[smallest], A[i]] = [A[i], A[smallest]];
+        return minHeapify(A, smallest);
     }
 }
 

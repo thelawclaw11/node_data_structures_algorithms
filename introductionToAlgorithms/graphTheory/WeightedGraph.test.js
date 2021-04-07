@@ -51,7 +51,7 @@ describe("Weighted Graph", () => {
         seedGraphFromObject(graph, alpha);
         prettyPrint(graph);
     });*/
-    it("should list connected components", () => {
+    it("should list connected components(dfs)", () => {
         const graph = new WeightedGraph();
 
         const alpha = {
@@ -80,14 +80,86 @@ describe("Weighted Graph", () => {
             },
         };
         seedGraphFromObject(graph, alpha);
-        prettyPrint(graph);
 
-        const nodes = graph.listConnectedNodes("S");
+        const nodes = graph.dfs("S");
+
+        Object.keys(alpha).forEach((key) => {
+            expect(nodes).toContain(key);
+        });
+    });
+
+    it("should list connected components(bfs)", () => {
+        const graph = new WeightedGraph();
+
+        const alpha = {
+            S: {
+                A: 1,
+                B: 2,
+            },
+            A: {
+                C: 5,
+                E: 2,
+            },
+            B: {
+                A: 1,
+                D: 1,
+            },
+            D: {
+                F: 1,
+            },
+            F: {},
+            E: {
+                F: 4,
+                D: 1,
+            },
+            C: {
+                E: 3,
+            },
+        };
+        seedGraphFromObject(graph, alpha);
+
+        const nodes = graph.bfs("S");
         console.log(nodes);
 
         Object.keys(alpha).forEach((key) => {
             expect(nodes).toContain(key);
         });
+    });
+
+    it("should perform dijkstra shortest path", () => {
+        const graph = new WeightedGraph();
+
+        const seed = {
+            S: {
+                A: 1,
+                B: 2,
+            },
+            A: {
+                C: 5,
+                E: 2,
+            },
+            B: {
+                A: 1,
+                D: 1,
+            },
+            D: {
+                F: 1,
+            },
+            F: {},
+            E: {
+                F: 4,
+                D: 1,
+            },
+            C: {
+                E: 3,
+            },
+        };
+
+        seedGraphFromObject(graph, seed);
+
+        const result = graph.dijkstra("S", "F");
+
+        console.log(result);
     });
 });
 

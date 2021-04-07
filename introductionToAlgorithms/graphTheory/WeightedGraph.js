@@ -1,37 +1,5 @@
-class QueueNode {
-    constructor(value) {
-        this.value = value;
-        this.next = null;
-    }
-}
-
-class Queue {
-    constructor() {
-        this.head = null;
-        this.tail = null;
-    }
-
-    isEmpty() {
-        return this.head === null;
-    }
-
-    enqueue(value) {
-        const node = new QueueNode(value);
-
-        if (this.head === null) {
-            this.head = node;
-            this.tail = node;
-        }
-        this.tail.next = node;
-        this.tail = node;
-    }
-
-    dequeue() {
-        const oldHead = this.head;
-        this.head = this.head.next;
-        return oldHead.value;
-    }
-}
+const PriorityQueue = require("../PriorityQueue/PriorityQueue");
+const Queue = require("../Queue");
 
 class Vertex {
     constructor(key) {
@@ -65,7 +33,7 @@ class WeightedGraph {
         origin.edges.set(destination.key, weight);
     }
 
-    listConnectedNodes(sourceKey) {
+    dfs(sourceKey) {
         const visited = new Set();
 
         const inner = (key) => {
@@ -83,36 +51,60 @@ class WeightedGraph {
         inner(sourceKey);
         return Array.from(visited);
     }
-    /*shortestPaths(sourceKey) {
+
+    bfs(sourceKey) {
         const queue = new Queue();
-        const distance = new Map();
-        const predecessor = new Map();
-
-        for (const key of this.vertices.key()) {
-            distance.set(key, Infinity);
-        }
-        distance.set(sourceKey, 0);
-        predecessor.set(sourceKey, sourceKey);
-
         queue.enqueue(sourceKey);
 
+        const visited = new Set();
+        visited.add(sourceKey);
+
         while (!queue.isEmpty()) {
-            const currentKey = queue.dequeue();
-            const currentVertex = this.vertices.get(currentKey);
-
-            for (const [endKey, weight] of currentVertex.edges.entries()) {
-            }
+            const key = queue.dequeue();
+            const vertex = this.getVertex(key);
+            vertex.edges.forEach((value, edgeKey) => {
+                if (!visited.has(edgeKey)) {
+                    visited.add(edgeKey);
+                    queue.enqueue(edgeKey);
+                }
+            });
         }
-    }*/
 
-    topologicalSort() {}
+        return Array.from(visited);
+    }
 
-    /*dijkstra(originKey, destinationKey) {
-        const d = [];
-        const pi = [];
+    dijkstra(sourceKey) {
+        const dist = new Map();
+        const prev = new Map();
 
-        this.vertices.forEach();
-    }*/
+        const Q = new PriorityQueue((a, b) => dist.get(a) < dist.get(b));
+
+        const searched = new Set();
+
+        this.vertices.forEach((_, key) => {
+            dist.set(key, Infinity);
+            prev.set(key, null);
+            Q.insert(key);
+        });
+
+        dist.set(sourceKey, 0);
+
+        while (!Q.isEmpty()) {
+            const key = Q.extract();
+            const vertex = this.getVertex(key);
+            vertex.edges.forEach((edgeWeight, edgeKey) => {
+                if (!searched.has(edgeKey)) {
+                    const alt = dist.get(key) + edgeWeight;
+                    if (alt < dist.get(edgeKey)) {
+                        dist.set(edgeKey, alt);
+                        prev.set(edgeKey, key);
+                    }
+                }
+            });
+        }
+
+        return { dist, prev };
+    }
 }
 
 module.exports = { WeightedGraph };
