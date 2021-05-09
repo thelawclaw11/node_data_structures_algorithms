@@ -157,9 +157,42 @@ describe("Weighted Graph", () => {
 
         seedGraphFromObject(graph, seed);
 
-        const result = graph.dijkstra("S", "F");
+        const result = graph.dijkstra("S");
 
         console.log(result);
+    });
+    it("should perform bellman ford without negative cycles", () => {
+        const graph = new WeightedGraph();
+
+        const seed = {
+            S: {
+                A: 1,
+                B: 2,
+            },
+            A: {
+                C: 5,
+                E: 2,
+            },
+            B: {
+                A: 1,
+                D: 1,
+            },
+            D: {
+                F: 1,
+            },
+            F: {},
+            E: {
+                F: 4,
+                D: 1,
+            },
+            C: {
+                E: 3,
+            },
+        };
+
+        seedGraphFromObject(graph, seed);
+        const bellmanFordResult = graph.bellmanFord("S");
+        const dijkstraResult = graph.dijkstra("S");
     });
 });
 

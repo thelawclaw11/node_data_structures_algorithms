@@ -105,6 +105,19 @@ class WeightedGraph {
 
         return { dist, prev };
     }
+
+    bellmanFord(sourceKey) {
+        const dist = new Map();
+        const prev = new Map();
+
+        this.vertices.forEach((_, key) => {
+            dist.set(key, Infinity);
+            prev.set(key, null);
+        });
+        dist.set(sourceKey, 0);
+
+        for (let i = 0; i < this.vertices.length; i++) {}
+    }
 }
 
 module.exports = { WeightedGraph };
