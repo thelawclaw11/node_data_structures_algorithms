@@ -1,5 +1,4 @@
-const memo = {};
-function fib(n) {
+function fib(n, memo = {}) {
     if (memo[n]) {
         return memo[n];
     }
@@ -7,7 +6,7 @@ function fib(n) {
     if (n <= 2) {
         return 1;
     }
-    memo[n] = fib(n - 1) + fib(n - 2);
+    memo[n] = fib(n - 1, memo) + fib(n - 2, memo);
 
     return memo[n];
 }
@@ -24,6 +23,26 @@ function dynamicProgramming(n) {
     return dp[n];
 }
 
-console.log(dynamicProgramming(20));
+function usingStack(n) {
+    const stack = [n];
+    let answer = 0;
 
-console.log(fib(20));
+    while (stack.length > 0) {
+        const current = stack.pop();
+        if (current <= 2) {
+            answer += 1;
+        } else {
+            stack.push(current - 1);
+            stack.push(current - 2);
+        }
+    }
+    return answer;
+}
+
+console.time("stack");
+console.log(usingStack(30));
+console.timeEnd("stack");
+
+console.time("table");
+console.log(dynamicProgramming(30));
+console.timeEnd("table");

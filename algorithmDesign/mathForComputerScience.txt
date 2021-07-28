@@ -1,0 +1,11 @@
+unit 1
+
+terms:
+
+proposition--a statement that is either true or false
+predicate--a proposition whose truth depends on the value of one or more variables
+axiom--a proposition that is simply accepted as true
+proof--a sequence of logical deductions from axioms and previously proved statements that concludes with the proposition in question
+theorem--an important true proposition
+lemma--a preliminary proposition useful for proving later propositions
+corollary--a proposition that follows in just a few logical steps from a theorem

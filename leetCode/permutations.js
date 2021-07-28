@@ -18,5 +18,3 @@ function dfs(accum, nums, permutations) {
         nums.splice(i, 0, accum.pop());
     }
 }
-
-console.log(permute([1, 2, 3]));

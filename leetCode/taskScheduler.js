@@ -1,71 +1,27 @@
 function leastInterval(tasks, n) {
-    return mk2(tasks, n);
+    return mk3(tasks, n);
 }
 
 //mk1--brute force checking all permutations
 //mk2--backtracking dfs
 
 function mk3(tasks, n) {
-    return mk2(tasks, n);
-}
-
-function mk2(tasks, n) {
-    if (n === 0) {
-        return calculateExecutionCost(tasks, n);
-    }
-
-    const count = {};
+    const frequencies = Array(26).fill(0);
 
     for (const task of tasks) {
-        if (task in count) {
-            count[task]++;
-        } else {
-            count[task] = 1;
-        }
+        frequencies[task.charCodeAt(0) - "A".charCodeAt(0)]++;
     }
 
-    const entries = Object.entries(count);
+    frequencies.sort((a, b) => a - b);
 
-    function sortEntries() {
-        entries.sort((a, b) => b[1] - a[1]);
+    let fMax = frequencies[25];
+    let idleTime = (fMax - 1) * n;
+
+    for (let i = frequencies.length - 2; i >= 0 && idleTime > 0; --i) {
+        idleTime -= Math.min(fMax - 1, frequencies[i]);
     }
-    sortEntries();
-
-    const bestPermutation = [];
-    bestPermutation.push();
-
-    const mostRecent = {};
-
-    while (bestPermutation.length < tasks.length) {
-        let bestEntry = [];
-        let bestTaskCost = Infinity;
-
-        for (const entry of entries) {
-            if (entry[1] === 0) {
-                continue;
-            }
-
-            let costToAdd = 1;
-            if (entry[0] in mostRecent) {
-                const additionalCost = Math.max(0, n + 1 - (bestPermutation.length - mostRecent[entry[0]]));
-                costToAdd += additionalCost;
-            }
-
-            if (costToAdd < bestTaskCost) {
-                bestTaskCost = costToAdd;
-                bestEntry = entry;
-            }
-        }
-
-        bestPermutation.push(bestEntry[0]);
-        mostRecent[bestEntry[0]] = bestPermutation.length - 1;
-        bestEntry[1]--;
-        sortEntries();
-    }
-
-    //console.log(bestPermutation);
-
-    return calculateExecutionCost(bestPermutation, n);
+    idleTime = Math.max(0, idleTime);
+    return idleTime + tasks.length;
 }
 
 function mk1(tasks, n) {
@@ -82,8 +38,6 @@ function mk1(tasks, n) {
             bestPermutation = permutation;
         }
     }
-
-    console.log(bestPermutation);
     return minCost;
 }
 
@@ -148,3 +102,62 @@ function calculateExecutionCost(tasks, n) {
 }
 
 module.exports = { mk1, calculateExecutionCost, createExecutionOrder, createPermutations, leastInterval };
+
+function mk2(tasks, n) {
+    if (n === 0) {
+        return calculateExecutionCost(tasks, n);
+    }
+
+    const count = {};
+
+    for (const task of tasks) {
+        if (task in count) {
+            count[task]++;
+        } else {
+            count[task] = 1;
+        }
+    }
+
+    const entries = Object.entries(count);
+
+    function sortEntries() {
+        entries.sort((a, b) => b[1] - a[1]);
+    }
+    sortEntries();
+
+    const bestPermutation = [];
+    bestPermutation.push();
+
+    const mostRecent = {};
+
+    while (bestPermutation.length < tasks.length) {
+        let bestEntry = [];
+        let bestTaskCost = Infinity;
+
+        for (const entry of entries) {
+            if (entry[1] === 0) {
+                continue;
+            }
+
+            let costToAdd = 1;
+            if (entry[0] in mostRecent) {
+                const additionalCost = Math.max(0, n + 1 - (bestPermutation.length - mostRecent[entry[0]]));
+                costToAdd += additionalCost;
+            }
+
+            if (costToAdd < bestTaskCost) {
+                bestTaskCost = costToAdd;
+                bestEntry = entry;
+            }
+        }
+
+        bestPermutation.push(bestEntry[0]);
+        mostRecent[bestEntry[0]] = bestPermutation.length - 1;
+        bestEntry[1]--;
+        sortEntries();
+    }
+
+    //console.log(bestPermutation);
+
+    return calculateExecutionCost(bestPermutation, n);
+}

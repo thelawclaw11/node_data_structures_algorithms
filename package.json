@@ -9,8 +9,12 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "@datastructures-js/priority-queue": "^5.0.3",
+    "@datastructures-js/queue": "^4.0.0",
+    "@mostly-adequate/support": "^2.0.1",
     "faker": "^5.1.0",
-    "lodash": "^4.17.20"
+    "lodash": "^4.17.20",
+    "moment": "^2.29.1"
   },
   "devDependencies": {
     "eslint-plugin-jest": "^24.1.0",

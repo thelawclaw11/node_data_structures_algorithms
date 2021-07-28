@@ -35,11 +35,11 @@ describe("createPermutations", () => {
 });
 
 describe("taskScheduler", () => {
-    it("calculate", () => {
-        const left = [["A", "A", "A", "B", "C", "A", "D", "E", "A", "F", "G", "A"], 2];
-        const right = [["A", "B", "C", "A", "D", "E", "A", "F", "G", "A", "A", "A"], 2];
-        expect(calculateExecutionCost(...left)).toBe(calculateExecutionCost(...right));
-    });
+    // it("calculate", () => {
+    //     const left = [["A", "A", "A", "B", "C", "A", "D", "E", "A", "F", "G", "A"], 2];
+    //     const right = [["A", "B", "C", "A", "D", "E", "A", "F", "G", "A", "A", "A"], 2];
+    //     expect(calculateExecutionCost(...left)).toBe(calculateExecutionCost(...right));
+    // });
 
     it("one", () => {
         expect(leastInterval(["A", "A", "A", "B", "B", "B"], 2)).toBe(8);

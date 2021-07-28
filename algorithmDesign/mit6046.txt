@@ -1,0 +1,20 @@
+hamiltonian cycle is np complete
+
+
+interval scheduling
+
+what is a greedy algorithm?
+    is is myopic
+    it tries to maximize locally
+    it doesn't look forward to the future
+    it is not guaranteed to find the best solution
+    it is typically fast
+    processes inputs one piece at a time with no apparent look-ahead
+
+
+greedy interval scheduling:
+    1. use simple rule to select request i
+    2. reject all requests that are incompatible with i
+    3. repeat until all requests are processed
+
+

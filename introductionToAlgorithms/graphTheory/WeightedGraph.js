@@ -33,7 +33,7 @@ class WeightedGraph {
         origin.edges.set(destination.key, weight);
     }
 
-    dfs(sourceKey) {
+    listConnectedComponentsWithDfs(sourceKey) {
         const visited = new Set();
 
         const inner = (key) => {
@@ -52,7 +52,7 @@ class WeightedGraph {
         return Array.from(visited);
     }
 
-    bfs(sourceKey) {
+    listConnectedComponentsWithBfs(sourceKey) {
         const queue = new Queue();
         queue.enqueue(sourceKey);
 
@@ -105,18 +105,102 @@ class WeightedGraph {
 
         return { dist, prev };
     }
-
+    //goal time complexity--> O(E*V)
     bellmanFord(sourceKey) {
         const dist = new Map();
         const prev = new Map();
 
-        this.vertices.forEach((_, key) => {
+        let numVertices = 0;
+
+        for (const [key] of this.vertices) {
+            numVertices++;
             dist.set(key, Infinity);
             prev.set(key, null);
-        });
+        }
+
         dist.set(sourceKey, 0);
 
-        for (let i = 0; i < this.vertices.length; i++) {}
+        for (let i = 0; i < numVertices - 1; i++) {
+            for (const [vertexKey, vertex] of this.vertices) {
+                for (const [destinationKey, weight] of vertex.edges) {
+                    const alternativeDistance = dist.get(vertexKey) + weight;
+
+                    if (alternativeDistance < dist.get(destinationKey)) {
+                        dist.set(destinationKey, alternativeDistance);
+                        prev.set(destinationKey, vertexKey);
+                    }
+                }
+            }
+        }
+
+        for (const [vertexKey, vertex] of this.vertices) {
+            for (const [destinationKey, weight] of vertex.edges) {
+                const alternativeDistance = dist.get(vertexKey) + weight;
+
+                if (alternativeDistance < dist.get(destinationKey)) {
+                    return undefined;
+                }
+            }
+        }
+
+        return { dist, prev };
+    }
+
+    shortestPathWithDfs(sourceKey) {
+        const dist = new Map();
+        const prev = new Map();
+
+        for (const [key] of this.vertices) {
+            dist.set(key, Infinity);
+            prev.set(key, null);
+        }
+
+        dist.set(sourceKey, 0);
+
+        const helper = (currentKey) => {
+            const vertex = this.getVertex(currentKey);
+
+            for (const [destinationKey, weight] of vertex.edges) {
+                const alternativeDistance = dist.get(currentKey) + weight;
+                if (alternativeDistance < dist.get(destinationKey)) {
+                    dist.set(destinationKey, alternativeDistance);
+                    prev.set(destinationKey, currentKey);
+                    helper(destinationKey);
+                }
+            }
+        };
+        helper(sourceKey);
+        return { dist, prev };
+    }
+
+    shortestPathWithBfs(sourceKey) {
+        const dist = new Map();
+        const prev = new Map();
+
+        for (const [key] of this.vertices) {
+            dist.set(key, Infinity);
+            prev.set(key, null);
+        }
+
+        dist.set(sourceKey, 0);
+
+        const queue = new Queue();
+        queue.enqueue(sourceKey);
+
+        while (!queue.isEmpty()) {
+            const key = queue.dequeue();
+            const vertex = this.getVertex(key);
+
+            for (const [destinationKey, weight] of vertex.edges) {
+                const alternativeDistance = dist.get(key) + weight;
+                if (alternativeDistance < dist.get(destinationKey)) {
+                    dist.set(destinationKey, alternativeDistance);
+                    prev.set(destinationKey, key);
+                    queue.enqueue(destinationKey);
+                }
+            }
+        }
+        return { dist, prev };
     }
 }
 
