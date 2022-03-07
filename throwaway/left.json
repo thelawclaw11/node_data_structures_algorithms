@@ -1,0 +1,29 @@
+{
+  "titles": [
+    {
+      "catalog": "LCCN:sn97064861",
+      "name": "Salt Fork Valley News",
+      "comments": [],
+      "flags": [
+        "CREATE_TITLE"
+      ]
+    },
+    {
+      "id": 777,
+      "catalog": "LCCN:2020262128",
+      "name": "Okawville Times",
+      "comments": [],
+      "flags": []
+    },
+    {
+      "catalog": "LCCN:sn88084075",
+      "name": "The Best oil review.",
+      "comments": [],
+      "flags": [
+        "CREATE_TITLE",
+        "OUT_OF_RANGE"
+      ]
+    }
+  ]
+}
+

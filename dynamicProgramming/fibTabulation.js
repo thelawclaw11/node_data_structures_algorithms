@@ -9,4 +9,4 @@ function fibTabulation(n) {
     return dp[n];
 }
 
-console.log(fibTabulation(6));
+console.log(fibTabulation(30));

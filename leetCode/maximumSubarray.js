@@ -1,3 +1,25 @@
+const faker = require("faker");
+
+const maxSubArray = (nums) => {
+    let best = 0;
+    let sum = 0;
+    for (let i = 0; i < nums.length; i++) {
+        sum = Math.max(nums[i], sum + nums[i]);
+        best = Math.max(best, sum);
+    }
+    return best;
+};
+
+const array = Array(100000000)
+    .fill()
+    .map(() => faker.random.number({ min: -1000, max: 1000 }));
+
+console.time();
+console.log(maxSubArray(array));
+console.timeEnd();
+
+//console.log(maxSubArray([-1, 2, 4, -3, 5, 2, -5, 2]));
+
 // function maxSubArray(nums) {
 //     if (nums.length === 1) {
 //         return nums[0];
@@ -40,7 +62,7 @@
 //     return Math.max(...memo);
 // }
 
-console.log(maxSubArray([-2, 1, -3, 4, -1, 2, 1, -5, 4]));
+// console.log(maxSubArray([-2, 1, -3, 4, -1, 2, 1, -5, 4]));
 
 //optimized
 

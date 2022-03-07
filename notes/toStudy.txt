@@ -1,3 +1,4 @@
 monotonic queue problem
 range queries
 segment trees
+fenwick trees

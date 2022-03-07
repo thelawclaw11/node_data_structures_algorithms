@@ -1,0 +1,2 @@
+learn convex hull algorithm
+median find divide and conquer
