@@ -1,10 +1,5 @@
-const { inspect } = require("util");
-function prettyPrint(x) {
-    console.log(inspect(x, false, null, true));
-}
+import fs from "fs";
 
-prettyPrint(
-    JSON.parse(
-        '{"titles":[{"id":790,"comments":[],"flags":[]},{"catalog":"LCCN:sn94051063","comments":[],"flags":["CREATE_TITLE"]}]}'
-    )
-);
+// const failures = JSON.parse(fs.readFileSync("./failures.json", "utf8"));
+// console.log(failures.length);
+console.log("ab".split("/"));

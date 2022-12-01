@@ -1,4 +1,5 @@
 {
+  "type": "module",
   "name": "node_data_structures_algorithms",
   "version": "1.0.0",
   "description": "",
@@ -13,10 +14,15 @@
     "@datastructures-js/queue": "^4.0.0",
     "@mostly-adequate/support": "^2.0.1",
     "axios": "^0.24.0",
+    "date-fns": "^2.29.1",
     "faker": "^5.1.0",
+    "json2csv": "^5.0.7",
     "lodash": "^4.17.20",
     "moment": "^2.29.1",
+    "p-limit": "^4.0.0",
+    "p-queue": "^7.2.0",
     "prettier": "^2.3.2",
+    "ramda": "^0.28.0",
     "remeda": "0.0.30"
   },
   "devDependencies": {

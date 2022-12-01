@@ -1,0 +1,300 @@
+[
+  {
+    "id": "619bc4c2-bf8f-40f6-99c0-b954ca3c848f",
+    "titleIds": {},
+    "summaryIds": {},
+    "titleSummary": {
+      "titles": [
+        {
+          "catalog": "LCCN:sn89067009",
+          "name": "The Jefferson republic.",
+          "comments": [],
+          "flags": [
+            "COPYRIGHT"
+          ],
+          "id": 30809
+        },
+        {
+          "name": "Tri-County Shopper",
+          "comments": [
+            "appears to be its own paper but needs to be verified."
+          ],
+          "flags": [
+            "COPYRIGHT",
+            "TITLE_NOT_FOUND"
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "id": "0ed40b51-13a0-4599-8aaa-b12b8796c23e",
+    "titleIds": {},
+    "summaryIds": {},
+    "titleSummary": {
+      "titles": [
+        {
+          "catalog": "LCCN:sn89067009",
+          "name": "The Jefferson republic.",
+          "comments": [],
+          "flags": [
+            "COPYRIGHT"
+          ],
+          "id": 30809
+        }
+      ]
+    }
+  },
+  {
+    "id": "822bb63f-6a18-4d49-8cd0-f32a68161fa1",
+    "titleIds": {},
+    "summaryIds": {},
+    "titleSummary": {
+      "titles": [
+        {
+          "catalog": "LCCN:sn82004652",
+          "name": "southern nebraska register.",
+          "comments": [],
+          "flags": [
+            "COPYRIGHT"
+          ],
+          "id": 31111
+        }
+      ]
+    }
+  },
+  {
+    "id": "88b4c357-128f-4897-9d79-30b95daddce5",
+    "titleIds": {},
+    "summaryIds": {},
+    "titleSummary": {
+      "titles": [
+        {
+          "catalog": "LCCN:sn89066254",
+          "name": "The Oak Grove banner.",
+          "comments": [],
+          "flags": [
+            "COPYRIGHT",
+            "CREATE_TITLE"
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "id": "9c37b95a-e9a1-478a-822f-4d502adc0f6a",
+    "titleIds": {},
+    "summaryIds": {},
+    "titleSummary": {
+      "titles": [
+        {
+          "catalog": "LCCN:sn89067009",
+          "name": "The Jefferson republic.",
+          "comments": [],
+          "flags": [
+            "COPYRIGHT"
+          ],
+          "id": 30809
+        }
+      ]
+    }
+  },
+  {
+    "id": "e8da127e-c166-45c3-847e-1f4206004318",
+    "titleIds": {},
+    "summaryIds": {},
+    "titleSummary": {
+      "titles": [
+        {
+          "id": 30828,
+          "catalog": "LCCN:sn86063306",
+          "name": "Columbia Daily Tribune",
+          "comments": [],
+          "flags": [
+            "COPYRIGHT"
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "id": "aef3081f-587d-4118-9f4a-6176850da5ca",
+    "titleIds": {},
+    "summaryIds": {},
+    "titleSummary": {
+      "titles": [
+        {
+          "catalog": "LCCN:sn89067009",
+          "name": "The Jefferson republic.",
+          "comments": [],
+          "flags": [
+            "COPYRIGHT"
+          ],
+          "id": 30809
+        }
+      ]
+    }
+  },
+  {
+    "id": "8fbaba3c-ba50-431d-89bd-26ec0fea5d21",
+    "titleIds": {},
+    "summaryIds": {},
+    "titleSummary": {
+      "titles": [
+        {
+          "catalog": "LCCN:sn89066254",
+          "name": "The Oak Grove banner.",
+          "comments": [],
+          "flags": [
+            "COPYRIGHT",
+            "CREATE_TITLE"
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "id": "98efe562-2ccc-4c19-98ba-867871796abe",
+    "titleIds": {},
+    "summaryIds": {},
+    "titleSummary": {
+      "titles": [
+        {
+          "id": 22974,
+          "catalog": "LCCN:sn89067531",
+          "name": "The Cass County Democrat-Missourian",
+          "comments": [],
+          "flags": [
+            "COPYRIGHT"
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "id": "9ccf2a28-049b-459a-a566-80c0ab8b2091",
+    "titleIds": {},
+    "summaryIds": {},
+    "titleSummary": {
+      "titles": [
+        {
+          "id": 22974,
+          "catalog": "LCCN:sn89067531",
+          "name": "The Cass County Democrat-Missourian",
+          "comments": [],
+          "flags": [
+            "COPYRIGHT"
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "id": "8b5d108d-7069-41e4-9e14-b0540a02bf95",
+    "titleIds": {},
+    "summaryIds": {},
+    "titleSummary": {
+      "titles": [
+        {
+          "catalog": "LCCN:sn89067009",
+          "name": "The Jefferson republic.",
+          "comments": [],
+          "flags": [
+            "COPYRIGHT"
+          ],
+          "id": 30809
+        }
+      ]
+    }
+  },
+  {
+    "id": "722e6d4e-67a7-42ef-97bd-d41aac56470f",
+    "titleIds": {},
+    "summaryIds": {},
+    "titleSummary": {
+      "titles": [
+        {
+          "catalog": "LCCN:sn82004652",
+          "name": "southern nebraska register.",
+          "comments": [],
+          "flags": [
+            "COPYRIGHT"
+          ],
+          "id": 31111
+        }
+      ]
+    }
+  },
+  {
+    "id": "f663fcbc-cc37-490c-94da-a0f73f1d23b9",
+    "titleIds": {},
+    "summaryIds": {},
+    "titleSummary": {
+      "titles": [
+        {
+          "catalog": "LCCN:sn82004652",
+          "name": "southern nebraska register.",
+          "comments": [],
+          "flags": [
+            "COPYRIGHT"
+          ],
+          "id": 31111
+        }
+      ]
+    }
+  },
+  {
+    "id": "ce9c0937-55c0-41cc-82f8-64be63c8267d",
+    "titleIds": {},
+    "summaryIds": {},
+    "titleSummary": {
+      "titles": [
+        {
+          "catalog": "LCCN:sn89066254",
+          "name": "The Oak Grove banner.",
+          "comments": [],
+          "flags": [
+            "COPYRIGHT",
+            "CREATE_TITLE"
+          ]
+        },
+        {
+          "name": "Town & County Shopper News",
+          "comments": [],
+          "flags": [
+            "COPYRIGHT",
+            "TITLE_NOT_FOUND"
+          ]
+        },
+        {
+          "catalog": "LCCN:sn89066266",
+          "name": "The banner.",
+          "comments": [],
+          "flags": [
+            "COPYRIGHT",
+            "CREATE_TITLE"
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "id": "2718ddb6-3d8d-4d5b-bd21-a3656c038d14",
+    "titleIds": {},
+    "summaryIds": {},
+    "titleSummary": {
+      "titles": [
+        {
+          "name": "Lowry City Independent",
+          "comments": [
+            "There was a Lowry City Independent, but it only went through 1940. The dates on this unit are 1995 and 1996, so I wasn't able to find a title with the correct dates. "
+          ],
+          "flags": [
+            "COPYRIGHT",
+            "TITLE_NOT_FOUND"
+          ]
+        }
+      ]
+    }
+  }
+]

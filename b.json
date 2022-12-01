@@ -1,0 +1,31 @@
+{
+  "message": "connect EMFILE 10.179.54.15:443 - Local (undefined:undefined)",
+  "name": "Error",
+  "stack": "Error: connect EMFILE 10.179.54.15:443 - Local (undefined:undefined)\n    at internalConnect (net.js:923:16)\n    at defaultTriggerAsyncIdScope (internal/async_hooks.js:364:12)\n    at GetAddrInfoReqWrap.emitLookup [as callback] (net.js:1066:9)\n    at GetAddrInfoReqWrap.onlookup [as oncomplete] (dns.js:68:8)",
+  "config": {
+    "url": "https://www.pulseline.cloud/flow-api/containers/18450d47-9bd4-4b75-ae82-23c9b7f25551",
+    "method": "get",
+    "headers": {
+      "Accept": "application/json, text/plain, */*",
+      "Auth-Token": "eyJraWQiOiJTRnlXbEE2aDB4eEhjUDFFSHUwbUJcL3hsVDBFV3hNanlvckY1eXNiMzlnbz0iLCJhbGciOiJSUzI1NiJ9.eyJzdWIiOiI2MnI1cGNzZGRnNm5tdGtndHJtdDl1ZmNiZiIsInRva2VuX3VzZSI6ImFjY2VzcyIsInNjb3BlIjoiZmxvdy1hcGlcL3N5c3RlbSIsImF1dGhfdGltZSI6MTY1NjYwMTAxMSwiaXNzIjoiaHR0cHM6XC9cL2NvZ25pdG8taWRwLnVzLWVhc3QtMS5hbWF6b25hd3MuY29tXC91cy1lYXN0LTFfT1QzTHNTbGk3IiwiZXhwIjoxNjU2NjA0NjExLCJpYXQiOjE2NTY2MDEwMTEsInZlcnNpb24iOjIsImp0aSI6IjAzNjgzODc5LTUyZDgtNDkyYS05MmFlLWMwM2ExNmNiN2VlMyIsImNsaWVudF9pZCI6IjYycjVwY3NkZGc2bm10a2d0cm10OXVmY2JmIn0.iWa4AwPj_q42tAnWgyARNhdOU6SXdahzCYK0u2bLAQOB7d7HaM2ck8D2MmlvdKIA6NB8iSHUYxO8UlPPypwKdWVglVgbGSDrX04Ts9uRFMVXs29TIN9MVrY5h-EPV22O9BXgSSr9LZMRh2NKwjBHAMWHWgr1K-1GWNnK6u9NxyGYifD8YFYL6UrrsoeCPI5SSlupUS2T7FJEj4Psy8vW0_LuLbuj6EK-ikfUtXzU653EwuNISHoAAWUPf09jYm07cisHXPWP9PmqAxd77xFt57ktI7wzHxn43vsepXIqqkN8WVNj3pZKrtJ8UsLUCSFPj9M1lmm38ggfWtNOqMfZTg",
+      "User-Agent": "axios/0.21.4"
+    },
+    "transformRequest": [
+      null
+    ],
+    "transformResponse": [
+      null
+    ],
+    "timeout": 0,
+    "xsrfCookieName": "XSRF-TOKEN",
+    "xsrfHeaderName": "X-XSRF-TOKEN",
+    "maxContentLength": -1,
+    "maxBodyLength": -1,
+    "transitional": {
+      "silentJSONParsing": true,
+      "forcedJSONParsing": true,
+      "clarifyTimeoutError": false
+    }
+  },
+  "code": "EMFILE"
+}

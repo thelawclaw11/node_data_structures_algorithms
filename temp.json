@@ -1,0 +1,1155 @@
+{
+  "StartAt": "entry-point-choice",
+  "States": {
+    "entry-point-choice": {
+      "Type": "Choice",
+      "Comment": "entry point choice",
+      "Choices": [
+        {
+          "And": [
+            {
+              "Variable": "$.entry_point",
+              "IsPresent": true
+            },
+            {
+              "Variable": "$.entry_point",
+              "StringEquals": "indexqa"
+            }
+          ],
+          "Next": "indexqa"
+        },
+        {
+          "And": [
+            {
+              "Variable": "$.entry_point",
+              "IsPresent": true
+            },
+            {
+              "Variable": "$.entry_point",
+              "StringEquals": "cds"
+            }
+          ],
+          "Next": "cds"
+        },
+        {
+          "And": [
+            {
+              "Variable": "$.entry_point",
+              "IsPresent": true
+            },
+            {
+              "Variable": "$.entry_point",
+              "StringEquals": "index"
+            }
+          ],
+          "Next": "index"
+        },
+        {
+          "And": [
+            {
+              "Variable": "$.entry_point",
+              "IsPresent": true
+            },
+            {
+              "Variable": "$.entry_point",
+              "StringEquals": "titlevalidate"
+            }
+          ],
+          "Next": "titlevalidate"
+        },
+        {
+          "And": [
+            {
+              "Variable": "$.entry_point",
+              "IsPresent": true
+            },
+            {
+              "Variable": "$.entry_point",
+              "StringEquals": "split-into-batches"
+            }
+          ],
+          "Next": "split-into-batches"
+        }
+      ],
+      "Default": "create-thumbnail-images-task"
+    },
+    "create-thumbnail-images-task": {
+      "Next": "assign",
+      "Retry": [
+        {
+          "ErrorEquals": [
+            "SQS.AmazonSQSException"
+          ],
+          "IntervalSeconds": 1,
+          "MaxAttempts": 10,
+          "BackoffRate": 2
+        }
+      ],
+      "Catch": [
+        {
+          "ErrorEquals": [
+            "States.ALL"
+          ],
+          "ResultPath": "$.exception",
+          "Next": "create-thumbnail-images-task error"
+        }
+      ],
+      "Type": "Task",
+      "TimeoutSeconds": 86400,
+      "ResultPath": null,
+      "Resource": "arn:aws:states:::sqs:sendMessage.waitForTaskToken",
+      "Parameters": {
+        "QueueUrl": "https://sqs.us-east-1.amazonaws.com/326835333291/TaskQueue-TaskQueue4E809D5D-WIORGJfZze2u.fifo",
+        "MessageBody": {
+          "Cluster": "arn:aws:ecs:us-east-1:326835333291:cluster/scan-workflow-ClusterEB0386A7-w1BQKSY34SQv",
+          "NetworkConfiguration": {
+            "AwsvpcConfiguration": {
+              "Subnets": [
+                "subnet-0bfa6442",
+                "subnet-a089268d"
+              ],
+              "SecurityGroups": [
+                "sg-10dfd265"
+              ]
+            }
+          },
+          "Environment": [
+            {
+              "name": "container_id",
+              "value.$": "$.container_id"
+            },
+            {
+              "name": "s3_container_id",
+              "value.$": "$.s3_container_id"
+            },
+            {
+              "name": "max_page_name",
+              "value.$": "$.max_page_name"
+            },
+            {
+              "name": "task_token",
+              "value.$": "$$.Task.Token"
+            },
+            {
+              "name": "timeout",
+              "value": "5400000"
+            }
+          ]
+        },
+        "MessageGroupId": "create-thumbnail-images"
+      }
+    },
+    "create-thumbnail-images-task error": {
+      "Next": "create-thumbnail-images-task",
+      "Retry": [
+        {
+          "ErrorEquals": [
+            "SQS.AmazonSQSException"
+          ],
+          "IntervalSeconds": 1,
+          "MaxAttempts": 10,
+          "BackoffRate": 2
+        }
+      ],
+      "Type": "Task",
+      "Comment": "Sends errors to error queue",
+      "Resource": "arn:aws:states:::sqs:sendMessage.waitForTaskToken",
+      "Parameters": {
+        "QueueUrl": "https://sqs.us-east-1.amazonaws.com/326835333291/errorservice-ErrorQueue6C6264C8-1UL334WXXRKW3",
+        "MessageBody": {
+          "container.$": "$.container_id",
+          "cause.$": "$.exception.Cause",
+          "execution_id.$": "$$.Execution.Id",
+          "task_token.$": "$$.Task.Token",
+          "state": "create-thumbnail-images-task",
+          "output.$": "$"
+        }
+      }
+    },
+    "assign": {
+      "Next": "cds",
+      "Retry": [
+        {
+          "ErrorEquals": [
+            "SQS.AmazonSQSException"
+          ],
+          "IntervalSeconds": 1,
+          "MaxAttempts": 10,
+          "BackoffRate": 2
+        }
+      ],
+      "Parameters": {
+        "QueueUrl": "https://sqs.us-east-1.amazonaws.com/326835333291/WorkUnitQueue-WorkUnitQueue7D1DD5EA-HLP8E5IQDH4H",
+        "MessageBody": {
+          "type": "assign",
+          "output.$": "$",
+          "task_token.$": "$$.Task.Token"
+        }
+      },
+      "Type": "Task",
+      "Comment": "assign",
+      "Resource": "arn:aws:states:::sqs:sendMessage.waitForTaskToken"
+    },
+    "cds": {
+      "Next": "index",
+      "Retry": [
+        {
+          "ErrorEquals": [
+            "SQS.AmazonSQSException"
+          ],
+          "IntervalSeconds": 1,
+          "MaxAttempts": 10,
+          "BackoffRate": 2
+        }
+      ],
+      "Parameters": {
+        "QueueUrl": "https://sqs.us-east-1.amazonaws.com/326835333291/WorkUnitQueue-WorkUnitQueue7D1DD5EA-HLP8E5IQDH4H",
+        "MessageBody": {
+          "type": "cds",
+          "output.$": "$",
+          "task_token.$": "$$.Task.Token"
+        }
+      },
+      "Type": "Task",
+      "Comment": "cds",
+      "Resource": "arn:aws:states:::sqs:sendMessage.waitForTaskToken"
+    },
+    "index": {
+      "Next": "indexqa",
+      "Retry": [
+        {
+          "ErrorEquals": [
+            "SQS.AmazonSQSException"
+          ],
+          "IntervalSeconds": 1,
+          "MaxAttempts": 10,
+          "BackoffRate": 2
+        }
+      ],
+      "Parameters": {
+        "QueueUrl": "https://sqs.us-east-1.amazonaws.com/326835333291/WorkUnitQueue-WorkUnitQueue7D1DD5EA-HLP8E5IQDH4H",
+        "MessageBody": {
+          "type": "index",
+          "output.$": "$",
+          "task_token.$": "$$.Task.Token"
+        }
+      },
+      "Type": "Task",
+      "Comment": "index",
+      "Resource": "arn:aws:states:::sqs:sendMessage.waitForTaskToken"
+    },
+    "indexqa": {
+      "Next": "rescan-choice",
+      "Retry": [
+        {
+          "ErrorEquals": [
+            "SQS.AmazonSQSException"
+          ],
+          "IntervalSeconds": 1,
+          "MaxAttempts": 10,
+          "BackoffRate": 2
+        }
+      ],
+      "Parameters": {
+        "QueueUrl": "https://sqs.us-east-1.amazonaws.com/326835333291/WorkUnitQueue-WorkUnitQueue7D1DD5EA-HLP8E5IQDH4H",
+        "MessageBody": {
+          "type": "indexqa",
+          "output.$": "$",
+          "task_token.$": "$$.Task.Token"
+        }
+      },
+      "Type": "Task",
+      "Comment": "indexqa",
+      "Resource": "arn:aws:states:::sqs:sendMessage.waitForTaskToken"
+    },
+    "site-delivery-error-choice": {
+      "Type": "Choice",
+      "Comment": "site delivery error choice",
+      "Choices": [
+        {
+          "Variable": "$.site_delivery_error_choice",
+          "StringEquals": "reindex",
+          "Next": "indexqa"
+        },
+        {
+          "Variable": "$.site_delivery_error_choice",
+          "StringEquals": "no-import",
+          "Next": "customer-delivery-needed"
+        }
+      ],
+      "Default": "site-delivery-task"
+    },
+    "site-delivery-task error": {
+      "Next": "site-delivery-error-choice",
+      "Retry": [
+        {
+          "ErrorEquals": [
+            "SQS.AmazonSQSException"
+          ],
+          "IntervalSeconds": 1,
+          "MaxAttempts": 10,
+          "BackoffRate": 2
+        }
+      ],
+      "Type": "Task",
+      "Comment": "Sends errors to error queue",
+      "Resource": "arn:aws:states:::sqs:sendMessage.waitForTaskToken",
+      "Parameters": {
+        "QueueUrl": "https://sqs.us-east-1.amazonaws.com/326835333291/errorservice-ErrorQueue6C6264C8-1UL334WXXRKW3",
+        "MessageBody": {
+          "container.$": "$.container_id",
+          "cause.$": "$.exception.Cause",
+          "execution_id.$": "$$.Execution.Id",
+          "task_token.$": "$$.Task.Token",
+          "state": "site-delivery-task",
+          "output.$": "$"
+        }
+      }
+    },
+    "site-delivery-task": {
+      "Next": "siteqa",
+      "Retry": [
+        {
+          "ErrorEquals": [
+            "SQS.AmazonSQSException"
+          ],
+          "IntervalSeconds": 1,
+          "MaxAttempts": 10,
+          "BackoffRate": 2
+        }
+      ],
+      "Catch": [
+        {
+          "ErrorEquals": [
+            "States.ALL"
+          ],
+          "ResultPath": "$.exception",
+          "Next": "site-delivery-task error"
+        }
+      ],
+      "Type": "Task",
+      "TimeoutSeconds": 86400,
+      "ResultPath": null,
+      "Resource": "arn:aws:states:::sqs:sendMessage.waitForTaskToken",
+      "Parameters": {
+        "QueueUrl": "https://sqs.us-east-1.amazonaws.com/326835333291/TaskQueue-TaskQueue4E809D5D-WIORGJfZze2u.fifo",
+        "MessageBody": {
+          "Cluster": "arn:aws:ecs:us-east-1:326835333291:cluster/scan-workflow-ClusterEB0386A7-w1BQKSY34SQv",
+          "NetworkConfiguration": {
+            "AwsvpcConfiguration": {
+              "Subnets": [
+                "subnet-0bfa6442",
+                "subnet-a089268d"
+              ],
+              "SecurityGroups": [
+                "sg-10dfd265"
+              ]
+            }
+          },
+          "Environment": [
+            {
+              "name": "container_id",
+              "value.$": "$.container_id"
+            },
+            {
+              "name": "s3_container_id",
+              "value.$": "$.s3_container_id"
+            },
+            {
+              "name": "max_page_name",
+              "value.$": "$.max_page_name"
+            },
+            {
+              "name": "task_token",
+              "value.$": "$$.Task.Token"
+            },
+            {
+              "name": "ENV",
+              "value": "dev"
+            },
+            {
+              "name": "options",
+              "value.$": "States.JsonToString($.options)"
+            },
+            {
+              "name": "timeout",
+              "value": "3600000"
+            }
+          ]
+        },
+        "MessageGroupId": "site-delivery"
+      }
+    },
+    "Batch Map": {
+      "Type": "Map",
+      "ResultPath": "$",
+      "Next": "site-delivery-task",
+      "ResultSelector": {
+        "container_id.$": "$[0].container_id",
+        "execution_type.$": "$[0].execution_type",
+        "configuration.$": "$[0].configuration",
+        "retry_pages.$": "$[0].retry_pages",
+        "options.$": "$[0].options",
+        "max_page_name.$": "$[0].max_page_name",
+        "rescan.$": "$[0].rescan",
+        "s3_container_id.$": "$[0].s3_container_id"
+      },
+      "Iterator": {
+        "StartAt": "create-images-task",
+        "States": {
+          "create-images-task": {
+            "Next": "ocr-task",
+            "Retry": [
+              {
+                "ErrorEquals": [
+                  "SQS.AmazonSQSException"
+                ],
+                "IntervalSeconds": 1,
+                "MaxAttempts": 10,
+                "BackoffRate": 2
+              }
+            ],
+            "Catch": [
+              {
+                "ErrorEquals": [
+                  "States.ALL"
+                ],
+                "ResultPath": "$.exception",
+                "Next": "create-images-task error"
+              }
+            ],
+            "Type": "Task",
+            "TimeoutSeconds": 86400,
+            "ResultPath": null,
+            "Resource": "arn:aws:states:::sqs:sendMessage.waitForTaskToken",
+            "Parameters": {
+              "QueueUrl": "https://sqs.us-east-1.amazonaws.com/326835333291/TaskQueue-TaskQueue4E809D5D-WIORGJfZze2u.fifo",
+              "MessageBody": {
+                "Cluster": "arn:aws:ecs:us-east-1:326835333291:cluster/scan-workflow-ClusterEB0386A7-w1BQKSY34SQv",
+                "NetworkConfiguration": {
+                  "AwsvpcConfiguration": {
+                    "Subnets": [
+                      "subnet-0bfa6442",
+                      "subnet-a089268d"
+                    ],
+                    "SecurityGroups": [
+                      "sg-10dfd265"
+                    ]
+                  }
+                },
+                "Environment": [
+                  {
+                    "name": "configuration",
+                    "value.$": "$.configuration"
+                  },
+                  {
+                    "name": "execution_type",
+                    "value.$": "$.execution_type"
+                  },
+                  {
+                    "name": "retry_pages",
+                    "value.$": "$.retry_pages"
+                  },
+                  {
+                    "name": "container_id",
+                    "value.$": "$.container_id"
+                  },
+                  {
+                    "name": "s3_container_id",
+                    "value.$": "$.s3_container_id"
+                  },
+                  {
+                    "name": "pages",
+                    "value.$": "$.pages"
+                  },
+                  {
+                    "name": "task_token",
+                    "value.$": "$$.Task.Token"
+                  },
+                  {
+                    "name": "timeout",
+                    "value": "21600000"
+                  }
+                ]
+              },
+              "MessageGroupId": "create-images"
+            }
+          },
+          "create-images-task error": {
+            "Next": "create-images-task",
+            "Retry": [
+              {
+                "ErrorEquals": [
+                  "SQS.AmazonSQSException"
+                ],
+                "IntervalSeconds": 1,
+                "MaxAttempts": 10,
+                "BackoffRate": 2
+              }
+            ],
+            "Type": "Task",
+            "Comment": "Sends errors to error queue",
+            "Resource": "arn:aws:states:::sqs:sendMessage.waitForTaskToken",
+            "Parameters": {
+              "QueueUrl": "https://sqs.us-east-1.amazonaws.com/326835333291/errorservice-ErrorQueue6C6264C8-1UL334WXXRKW3",
+              "MessageBody": {
+                "container.$": "$.container_id",
+                "cause.$": "$.exception.Cause",
+                "execution_id.$": "$$.Execution.Id",
+                "task_token.$": "$$.Task.Token",
+                "state": "create-images-task",
+                "output.$": "$"
+              }
+            }
+          },
+          "ocr-task": {
+            "End": true,
+            "Retry": [
+              {
+                "ErrorEquals": [
+                  "SQS.AmazonSQSException"
+                ],
+                "IntervalSeconds": 1,
+                "MaxAttempts": 10,
+                "BackoffRate": 2
+              }
+            ],
+            "Catch": [
+              {
+                "ErrorEquals": [
+                  "States.ALL"
+                ],
+                "ResultPath": "$.exception",
+                "Next": "ocr-task error"
+              }
+            ],
+            "Type": "Task",
+            "TimeoutSeconds": 86400,
+            "ResultPath": null,
+            "Resource": "arn:aws:states:::sqs:sendMessage.waitForTaskToken",
+            "Parameters": {
+              "QueueUrl": "https://sqs.us-east-1.amazonaws.com/326835333291/TaskQueue-TaskQueue4E809D5D-WIORGJfZze2u.fifo",
+              "MessageBody": {
+                "Cluster": "arn:aws:ecs:us-east-1:326835333291:cluster/scan-workflow-ClusterEB0386A7-w1BQKSY34SQv",
+                "NetworkConfiguration": {
+                  "AwsvpcConfiguration": {
+                    "Subnets": [
+                      "subnet-0bfa6442",
+                      "subnet-a089268d"
+                    ],
+                    "SecurityGroups": [
+                      "sg-10dfd265"
+                    ]
+                  }
+                },
+                "Environment": [
+                  {
+                    "name": "execution_type",
+                    "value.$": "$.execution_type"
+                  },
+                  {
+                    "name": "configuration",
+                    "value.$": "$.configuration"
+                  },
+                  {
+                    "name": "retry_pages",
+                    "value.$": "$.retry_pages"
+                  },
+                  {
+                    "name": "container_id",
+                    "value.$": "$.container_id"
+                  },
+                  {
+                    "name": "s3_container_id",
+                    "value.$": "$.s3_container_id"
+                  },
+                  {
+                    "name": "pages",
+                    "value.$": "$.pages"
+                  },
+                  {
+                    "name": "task_token",
+                    "value.$": "$$.Task.Token"
+                  },
+                  {
+                    "name": "NEW_RELIC_LICENSE_KEY",
+                    "value": "d8bccaaf890065c13cd3d2d218c7745e92884db6"
+                  },
+                  {
+                    "name": "NEW_RELIC_APP_NAME",
+                    "value": "iarchives-ocr"
+                  },
+                  {
+                    "name": "timeout",
+                    "value": "60000000"
+                  }
+                ]
+              },
+              "MessageGroupId": "ocr"
+            }
+          },
+          "ocr-task error": {
+            "Next": "ocr-task",
+            "Retry": [
+              {
+                "ErrorEquals": [
+                  "SQS.AmazonSQSException"
+                ],
+                "IntervalSeconds": 1,
+                "MaxAttempts": 10,
+                "BackoffRate": 2
+              }
+            ],
+            "Type": "Task",
+            "Comment": "Sends errors to error queue",
+            "Resource": "arn:aws:states:::sqs:sendMessage.waitForTaskToken",
+            "Parameters": {
+              "QueueUrl": "https://sqs.us-east-1.amazonaws.com/326835333291/errorservice-ErrorQueue6C6264C8-1UL334WXXRKW3",
+              "MessageBody": {
+                "container.$": "$.container_id",
+                "cause.$": "$.exception.Cause",
+                "execution_id.$": "$$.Execution.Id",
+                "task_token.$": "$$.Task.Token",
+                "state": "ocr-task",
+                "output.$": "$"
+              }
+            }
+          }
+        }
+      },
+      "ItemsPath": "$.batches",
+      "MaxConcurrency": 10
+    },
+    "split-into-batches": {
+      "Next": "Batch Map",
+      "Retry": [
+        {
+          "ErrorEquals": [
+            "Lambda.ServiceException",
+            "Lambda.AWSLambdaException",
+            "Lambda.SdkClientException"
+          ],
+          "IntervalSeconds": 2,
+          "MaxAttempts": 6,
+          "BackoffRate": 2
+        }
+      ],
+      "Catch": [
+        {
+          "ErrorEquals": [
+            "States.ALL"
+          ],
+          "ResultPath": "$.exception",
+          "Next": "split-into-batches error"
+        }
+      ],
+      "Type": "Task",
+      "Comment": "Split container into batches",
+      "ResultPath": "$.batches",
+      "Resource": "arn:aws:lambda:us-east-1:326835333291:function:scan-workflowSplitIntoBatches",
+      "Parameters": {
+        "input.$": "$",
+        "chunk_size": 40
+      }
+    },
+    "split-into-batches error": {
+      "Next": "split-into-batches",
+      "Retry": [
+        {
+          "ErrorEquals": [
+            "SQS.AmazonSQSException"
+          ],
+          "IntervalSeconds": 1,
+          "MaxAttempts": 10,
+          "BackoffRate": 2
+        }
+      ],
+      "Type": "Task",
+      "Comment": "Sends errors to error queue",
+      "Resource": "arn:aws:states:::sqs:sendMessage.waitForTaskToken",
+      "Parameters": {
+        "QueueUrl": "https://sqs.us-east-1.amazonaws.com/326835333291/errorservice-ErrorQueue6C6264C8-1UL334WXXRKW3",
+        "MessageBody": {
+          "container.$": "$.container_id",
+          "cause.$": "$.exception.Cause",
+          "execution_id.$": "$$.Execution.Id",
+          "task_token.$": "$$.Task.Token",
+          "state": "split-into-batches",
+          "output.$": "$"
+        }
+      }
+    },
+    "titlevalidate": {
+      "Next": "split-into-batches",
+      "Retry": [
+        {
+          "ErrorEquals": [
+            "SQS.AmazonSQSException"
+          ],
+          "IntervalSeconds": 1,
+          "MaxAttempts": 10,
+          "BackoffRate": 2
+        }
+      ],
+      "Parameters": {
+        "QueueUrl": "https://sqs.us-east-1.amazonaws.com/326835333291/WorkUnitQueue-WorkUnitQueue7D1DD5EA-HLP8E5IQDH4H",
+        "MessageBody": {
+          "type": "titlevalidate",
+          "output.$": "$",
+          "task_token.$": "$$.Task.Token"
+        }
+      },
+      "Type": "Task",
+      "Comment": "titlevalidate",
+      "Resource": "arn:aws:states:::sqs:sendMessage.waitForTaskToken"
+    },
+    "siteqa": {
+      "Next": "siteqa-choice",
+      "Retry": [
+        {
+          "ErrorEquals": [
+            "SQS.AmazonSQSException"
+          ],
+          "IntervalSeconds": 1,
+          "MaxAttempts": 10,
+          "BackoffRate": 2
+        }
+      ],
+      "Parameters": {
+        "QueueUrl": "https://sqs.us-east-1.amazonaws.com/326835333291/WorkUnitQueue-WorkUnitQueue7D1DD5EA-HLP8E5IQDH4H",
+        "MessageBody": {
+          "type": "siteqa",
+          "output.$": "$",
+          "task_token.$": "$$.Task.Token"
+        }
+      },
+      "Type": "Task",
+      "Comment": "siteqa",
+      "Resource": "arn:aws:states:::sqs:sendMessage.waitForTaskToken"
+    },
+    "siteqa-choice": {
+      "Type": "Choice",
+      "Comment": "site qa choice",
+      "Choices": [
+        {
+          "Variable": "$.site_qa_failed",
+          "BooleanEquals": true,
+          "Next": "indexqa"
+        }
+      ],
+      "Default": "customer-delivery-needed"
+    },
+    "customer-delivery-needed": {
+      "Next": "customer-delivery-choice",
+      "Retry": [
+        {
+          "ErrorEquals": [
+            "Lambda.ServiceException",
+            "Lambda.AWSLambdaException",
+            "Lambda.SdkClientException"
+          ],
+          "IntervalSeconds": 2,
+          "MaxAttempts": 6,
+          "BackoffRate": 2
+        }
+      ],
+      "Type": "Task",
+      "Comment": "Determine if customer delivery is needed",
+      "ResultPath": "$.customer_delivery_needed",
+      "Resource": "arn:aws:lambda:us-east-1:326835333291:function:CustomerDeliveryNeeded"
+    },
+    "customer-delivery-choice": {
+      "Type": "Choice",
+      "Comment": "customer delivery choice",
+      "Choices": [
+        {
+          "Variable": "$.customer_delivery_needed",
+          "BooleanEquals": true,
+          "Next": "customer-packaging-task"
+        }
+      ],
+      "Default": "cleanup"
+    },
+    "cleanup": {
+      "End": true,
+      "Retry": [
+        {
+          "ErrorEquals": [
+            "Lambda.ServiceException",
+            "Lambda.AWSLambdaException",
+            "Lambda.SdkClientException"
+          ],
+          "IntervalSeconds": 2,
+          "MaxAttempts": 6,
+          "BackoffRate": 2
+        }
+      ],
+      "Catch": [
+        {
+          "ErrorEquals": [
+            "States.ALL"
+          ],
+          "ResultPath": "$.exception",
+          "Next": "cleanup error"
+        }
+      ],
+      "Type": "Task",
+      "Comment": "Cleanup generated files",
+      "Resource": "arn:aws:states:::lambda:invoke",
+      "Parameters": {
+        "FunctionName": "arn:aws:lambda:us-east-1:326835333291:function:scan-workflowCleanup",
+        "Payload.$": "$"
+      }
+    },
+    "cleanup error": {
+      "Next": "cleanup",
+      "Retry": [
+        {
+          "ErrorEquals": [
+            "SQS.AmazonSQSException"
+          ],
+          "IntervalSeconds": 1,
+          "MaxAttempts": 10,
+          "BackoffRate": 2
+        }
+      ],
+      "Type": "Task",
+      "Comment": "Sends errors to error queue",
+      "Resource": "arn:aws:states:::sqs:sendMessage.waitForTaskToken",
+      "Parameters": {
+        "QueueUrl": "https://sqs.us-east-1.amazonaws.com/326835333291/errorservice-ErrorQueue6C6264C8-1UL334WXXRKW3",
+        "MessageBody": {
+          "container.$": "$.container_id",
+          "cause.$": "$.exception.Cause",
+          "execution_id.$": "$$.Execution.Id",
+          "task_token.$": "$$.Task.Token",
+          "state": "cleanup",
+          "output.$": "$"
+        }
+      }
+    },
+    "customer-delivery-task": {
+      "Next": "cleanup",
+      "Retry": [
+        {
+          "ErrorEquals": [
+            "SQS.AmazonSQSException"
+          ],
+          "IntervalSeconds": 1,
+          "MaxAttempts": 10,
+          "BackoffRate": 2
+        }
+      ],
+      "Catch": [
+        {
+          "ErrorEquals": [
+            "States.ALL"
+          ],
+          "ResultPath": "$.exception",
+          "Next": "customer-delivery-task error"
+        }
+      ],
+      "Type": "Task",
+      "TimeoutSeconds": 86400,
+      "ResultPath": null,
+      "Resource": "arn:aws:states:::sqs:sendMessage.waitForTaskToken",
+      "Parameters": {
+        "QueueUrl": "https://sqs.us-east-1.amazonaws.com/326835333291/TaskQueue-TaskQueue4E809D5D-WIORGJfZze2u.fifo",
+        "MessageBody": {
+          "Cluster": "arn:aws:ecs:us-east-1:326835333291:cluster/scan-workflow-ClusterEB0386A7-w1BQKSY34SQv",
+          "NetworkConfiguration": {
+            "AwsvpcConfiguration": {
+              "Subnets": [
+                "subnet-0bfa6442",
+                "subnet-a089268d"
+              ],
+              "SecurityGroups": [
+                "sg-10dfd265"
+              ]
+            }
+          },
+          "Environment": [
+            {
+              "name": "execution_type",
+              "value.$": "$.execution_type"
+            },
+            {
+              "name": "container_id",
+              "value.$": "$.container_id"
+            },
+            {
+              "name": "max_page_name",
+              "value.$": "$.max_page_name"
+            },
+            {
+              "name": "task_token",
+              "value.$": "$$.Task.Token"
+            },
+            {
+              "name": "ENV",
+              "value": "dev"
+            },
+            {
+              "name": "timeout",
+              "value": "43200000"
+            }
+          ]
+        },
+        "MessageGroupId": "customer-delivery"
+      }
+    },
+    "customer-delivery-task error": {
+      "Next": "customer-delivery-task",
+      "Retry": [
+        {
+          "ErrorEquals": [
+            "SQS.AmazonSQSException"
+          ],
+          "IntervalSeconds": 1,
+          "MaxAttempts": 10,
+          "BackoffRate": 2
+        }
+      ],
+      "Type": "Task",
+      "Comment": "Sends errors to error queue",
+      "Resource": "arn:aws:states:::sqs:sendMessage.waitForTaskToken",
+      "Parameters": {
+        "QueueUrl": "https://sqs.us-east-1.amazonaws.com/326835333291/errorservice-ErrorQueue6C6264C8-1UL334WXXRKW3",
+        "MessageBody": {
+          "container.$": "$.container_id",
+          "cause.$": "$.exception.Cause",
+          "execution_id.$": "$$.Execution.Id",
+          "task_token.$": "$$.Task.Token",
+          "state": "customer-delivery-task",
+          "output.$": "$"
+        }
+      }
+    },
+    "customer-packaging-task": {
+      "Next": "customer-delivery-task",
+      "Retry": [
+        {
+          "ErrorEquals": [
+            "SQS.AmazonSQSException"
+          ],
+          "IntervalSeconds": 1,
+          "MaxAttempts": 10,
+          "BackoffRate": 2
+        }
+      ],
+      "Catch": [
+        {
+          "ErrorEquals": [
+            "States.ALL"
+          ],
+          "ResultPath": "$.exception",
+          "Next": "customer-packaging-task error"
+        }
+      ],
+      "Type": "Task",
+      "TimeoutSeconds": 86400,
+      "ResultPath": null,
+      "Resource": "arn:aws:states:::sqs:sendMessage.waitForTaskToken",
+      "Parameters": {
+        "QueueUrl": "https://sqs.us-east-1.amazonaws.com/326835333291/TaskQueue-TaskQueue4E809D5D-WIORGJfZze2u.fifo",
+        "MessageBody": {
+          "Cluster": "arn:aws:ecs:us-east-1:326835333291:cluster/scan-workflow-ClusterEB0386A7-w1BQKSY34SQv",
+          "NetworkConfiguration": {
+            "AwsvpcConfiguration": {
+              "Subnets": [
+                "subnet-0bfa6442",
+                "subnet-a089268d"
+              ],
+              "SecurityGroups": [
+                "sg-10dfd265"
+              ]
+            }
+          },
+          "Environment": [
+            {
+              "name": "execution_type",
+              "value.$": "$.execution_type"
+            },
+            {
+              "name": "container_id",
+              "value.$": "$.container_id"
+            },
+            {
+              "name": "s3_container_id",
+              "value.$": "$.s3_container_id"
+            },
+            {
+              "name": "max_page_name",
+              "value.$": "$.max_page_name"
+            },
+            {
+              "name": "task_token",
+              "value.$": "$$.Task.Token"
+            },
+            {
+              "name": "timeout",
+              "value": "18000000"
+            }
+          ]
+        },
+        "MessageGroupId": "customer-packaging"
+      }
+    },
+    "customer-packaging-task error": {
+      "Next": "customer-packaging-task",
+      "Retry": [
+        {
+          "ErrorEquals": [
+            "SQS.AmazonSQSException"
+          ],
+          "IntervalSeconds": 1,
+          "MaxAttempts": 10,
+          "BackoffRate": 2
+        }
+      ],
+      "Type": "Task",
+      "Comment": "Sends errors to error queue",
+      "Resource": "arn:aws:states:::sqs:sendMessage.waitForTaskToken",
+      "Parameters": {
+        "QueueUrl": "https://sqs.us-east-1.amazonaws.com/326835333291/errorservice-ErrorQueue6C6264C8-1UL334WXXRKW3",
+        "MessageBody": {
+          "container.$": "$.container_id",
+          "cause.$": "$.exception.Cause",
+          "execution_id.$": "$$.Execution.Id",
+          "task_token.$": "$$.Task.Token",
+          "state": "customer-packaging-task",
+          "output.$": "$"
+        }
+      }
+    },
+    "create-thumbnail-images-after-rescan-task": {
+      "Next": "indexqa",
+      "Retry": [
+        {
+          "ErrorEquals": [
+            "SQS.AmazonSQSException"
+          ],
+          "IntervalSeconds": 1,
+          "MaxAttempts": 10,
+          "BackoffRate": 2
+        }
+      ],
+      "Catch": [
+        {
+          "ErrorEquals": [
+            "States.ALL"
+          ],
+          "ResultPath": "$.exception",
+          "Next": "create-thumbnail-images-after-rescan-task error"
+        }
+      ],
+      "Type": "Task",
+      "TimeoutSeconds": 86400,
+      "ResultPath": null,
+      "Resource": "arn:aws:states:::sqs:sendMessage.waitForTaskToken",
+      "Parameters": {
+        "QueueUrl": "https://sqs.us-east-1.amazonaws.com/326835333291/TaskQueue-TaskQueue4E809D5D-WIORGJfZze2u.fifo",
+        "MessageBody": {
+          "Cluster": "arn:aws:ecs:us-east-1:326835333291:cluster/scan-workflow-ClusterEB0386A7-w1BQKSY34SQv",
+          "NetworkConfiguration": {
+            "AwsvpcConfiguration": {
+              "Subnets": [
+                "subnet-0bfa6442",
+                "subnet-a089268d"
+              ],
+              "SecurityGroups": [
+                "sg-10dfd265"
+              ]
+            }
+          },
+          "Environment": [
+            {
+              "name": "container_id",
+              "value.$": "$.container_id"
+            },
+            {
+              "name": "s3_container_id",
+              "value.$": "$.s3_container_id"
+            },
+            {
+              "name": "max_page_name",
+              "value.$": "$.max_page_name"
+            },
+            {
+              "name": "task_token",
+              "value.$": "$$.Task.Token"
+            },
+            {
+              "name": "timeout",
+              "value": "5400000"
+            }
+          ]
+        },
+        "MessageGroupId": "create-thumbnail-images"
+      }
+    },
+    "create-thumbnail-images-after-rescan-task error": {
+      "Next": "create-thumbnail-images-after-rescan-task",
+      "Retry": [
+        {
+          "ErrorEquals": [
+            "SQS.AmazonSQSException"
+          ],
+          "IntervalSeconds": 1,
+          "MaxAttempts": 10,
+          "BackoffRate": 2
+        }
+      ],
+      "Type": "Task",
+      "Comment": "Sends errors to error queue",
+      "Resource": "arn:aws:states:::sqs:sendMessage.waitForTaskToken",
+      "Parameters": {
+        "QueueUrl": "https://sqs.us-east-1.amazonaws.com/326835333291/errorservice-ErrorQueue6C6264C8-1UL334WXXRKW3",
+        "MessageBody": {
+          "container.$": "$.container_id",
+          "cause.$": "$.exception.Cause",
+          "execution_id.$": "$$.Execution.Id",
+          "task_token.$": "$$.Task.Token",
+          "state": "create-thumbnail-images-after-rescan-task",
+          "output.$": "$"
+        }
+      }
+    },
+    "rescan": {
+      "Next": "create-thumbnail-images-after-rescan-task",
+      "Retry": [
+        {
+          "ErrorEquals": [
+            "SQS.AmazonSQSException"
+          ],
+          "IntervalSeconds": 1,
+          "MaxAttempts": 10,
+          "BackoffRate": 2
+        }
+      ],
+      "Parameters": {
+        "QueueUrl": "https://sqs.us-east-1.amazonaws.com/326835333291/WorkUnitQueue-WorkUnitQueue7D1DD5EA-HLP8E5IQDH4H",
+        "MessageBody": {
+          "type": "rescan",
+          "output.$": "$",
+          "task_token.$": "$$.Task.Token"
+        }
+      },
+      "Type": "Task",
+      "Comment": "rescan",
+      "Resource": "arn:aws:states:::sqs:sendMessage.waitForTaskToken"
+    },
+    "rescan-choice": {
+      "Type": "Choice",
+      "Comment": "rescan choice",
+      "Choices": [
+        {
+          "Variable": "$.rescan",
+          "BooleanEquals": true,
+          "Next": "rescan"
+        }
+      ],
+      "Default": "titlevalidate"
+    }
+  }
+}
